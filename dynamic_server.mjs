@@ -55,9 +55,10 @@ function queryDatabase(column, modifier, queryOverride = false) {
     let selectionModifier =
       "season, date, home_team, away_team, home_team_abbr, away_team_abbr, home_team_score, away_team_score, game_quality_rating, game_importance_rating FROM nhl_data WHERE ";
     if (queryOverride) {
-      query = `SELECT ${selectionModifier} ${column} ${modifier};`;
+      query = `SELECT ${selectionModifier} ${column} ${modifier} ORDER BY ${column} + 1 DESC;` // need to cast number so that 8 will not come before 79
+      console.log(query);
     } else {
-      query = `SELECT ${selectionModifier} home_team_abbr = '${column}' OR away_team_abbr = '${column}' ORDER BY date DESC;`;
+      query = `SELECT ${selectionModifier} home_team_abbr = '${column}' OR away_team_abbr = '${column}'ORDER BY date DESC;`;
     }
 
     db.all(query, (err, rows) => {
@@ -75,26 +76,26 @@ function abbreviationMapper(abbr, column) {
 
   switch (abbr) {
     case "verylow":
-      queryModifier = "< 20;";
+      queryModifier = "< 20";
       titleAbbr = "Very Low";
       break;
 
     case "low":
-      queryModifier = `>= 20 AND ${column} < 40;`;
+      queryModifier = `>= 20 AND ${column} < 40`;
       titleAbbr = "Low";
       break;
 
     case "medium":
-      queryModifier = `>= 40 AND ${column} < 60;`;
+      queryModifier = `>= 40 AND ${column} < 60`;
       titleAbbr = "Medium";
       break;
 
     case "high":
-      queryModifier = `>= 60 AND ${column} < 80;`;
+      queryModifier = `>= 60 AND ${column} < 80`;
       titleAbbr = "High";
       break;
     case "veryhigh":
-      queryModifier = ">= 80;";
+      queryModifier = ">= 80";
       titleAbbr = "Very High";
       break;
 
