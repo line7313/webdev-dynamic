@@ -35,6 +35,16 @@ let template = new Promise((resolve, reject) => {
     })
 });
 
+let homeTemplate = new Promise((resolve, reject) => {
+    fs.readFile(path.join(templatePath, 'home.html'), 'utf-8', (err, data) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(data);
+        }            
+    })
+});
+
 function queryDatabase(column, modifier, queryOverride = false) {
     return new Promise((resolve, reject) => {
         let query;
@@ -182,10 +192,27 @@ function mapName(inputAbbr, data) {
 
 
 app.get('/', async (req, res) => {   
-    template.then((template) => {
-        res.status(200).type('html').send(template);
-    });     
+
+    homeTemplate.then((homeTemplate) => {
+        res.status(200).type('html').send(homeTemplate);         
+    });  
 });
+
+app.get('/redirect', async (req, res) => {
+    let team = req.query.redirectTeam;
+    let quality = req.query.redirectQuality;
+    let importance = req.query.redirectImportance;
+
+    if (team) {
+        res.redirect(`/team/${team}`);
+    } else if (quality) {
+        res.redirect(`/quality/${quality}`);
+    } else {
+        res.redirect(`/importance/${importance}`);
+    }
+});
+
+
 
 app.get('/team/:team', (req, res) => {
     let teamAbbr = req.params.team.toUpperCase();
