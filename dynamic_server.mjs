@@ -193,6 +193,8 @@ function renderTemplate(route, data, userInput) {
           "##IMAGE_SRC##",
           imageSource
         );
+        renderedTemplate = renderedTemplate.replace("##TABLE_DATA##", table); // table replacement
+
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
 
         resolve(renderedTemplate);
