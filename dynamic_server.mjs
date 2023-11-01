@@ -126,6 +126,8 @@ function createTableHead(columns) {
 function renderTemplate(route, data, userInput) {
 
     return new Promise((resolve, reject) => {
+        let imageSource = '';
+        let imageAlt = '';
         template.then((template) => {
             if (route == "team") { //This is the route we specify when calling the renderTemplate function
                 let teamName = mapName(userInput, data);
@@ -137,10 +139,13 @@ function renderTemplate(route, data, userInput) {
                 data.forEach((game) => {
                     table += createTableRow([game.date, game.home_team, game.away_team, game.home_team_score, game.away_team_score]); // Populate a row for every game
                 })
-                table += '</tbody>'
-                
+                table += '</tbody>'                
                 renderedTemplate = template.replace('##TITLE##', title); // title replacement
                 renderedTemplate = renderedTemplate.replace('##TABLE_DATA##', table); // table replacement
+                imageSource = "https://cdn1.sportngin.com/attachments/photo/2721/4644/Mpls_Arena_large.jpg";
+                imageAlt = "A picture of a vintage hockey arena";
+                renderedTemplate = renderedTemplate.replace('##IMAGE_SRC##', imageSource);
+                renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt);
                 resolve(renderedTemplate);
 
             } else if (route == "quality") {
@@ -153,10 +158,13 @@ function renderTemplate(route, data, userInput) {
                 data.forEach((game) => {
                     table += createTableRow([game.date, game.home_team, game.away_team, game.game_quality_rating]);
                 })
-                table+= '</tbody>'
-
+                table+= '</tbody>'               
                 renderedTemplate = template.replace('##TITLE##', title);
-                renderedTemplate = renderedTemplate.replace('##TABLE_DATA##', table); // table replacement
+                imageSource = "https://stevethedoc.files.wordpress.com/2020/02/1942483.jpg";
+                imageAlt = "A picture of a quality stamp";
+                renderedTemplate = renderedTemplate.replace('##IMAGE_SRC##', imageSource);
+                renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt);               
+              
                 resolve(renderedTemplate);
 
             } else if (route == "importance") {
@@ -169,10 +177,14 @@ function renderTemplate(route, data, userInput) {
                 data.forEach((game) => {
                     table += createTableRow([game.date, game.home_team, game.away_team, game.game_importance_rating]); // Populate a row for every game
                 })
+
                 table += '</tbody>'
-                
+                imageSource = "https://www.picserver.org/assets/library/2020-10-13/originals/importance.jpg";
+                imageAlt = "A picture of a sign that says importance";
                 renderedTemplate = template.replace('##TITLE##', title); // title replacement
                 renderedTemplate = renderedTemplate.replace('##TABLE_DATA##', table); // table replacement
+                renderedTemplate = renderedTemplate.replace('##IMAGE_SRC##', imageSource);
+                renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt);
                 resolve(renderedTemplate);
             }
             
