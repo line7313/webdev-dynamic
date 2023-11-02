@@ -12,6 +12,12 @@ const templatePath = path.join(__dirname, "templates");
 let renderedTemplate = "";
 let titleAbbr = "";
 let errorMessage = "";
+let historyArray = [];
+let currentIndex = 0;
+let buttons = "";
+
+
+
 
 let app = express();
 app.use(express.static(root));
@@ -56,7 +62,6 @@ function queryDatabase(column, modifier, queryOverride = false) {
       "season, date, home_team, away_team, home_team_abbr, away_team_abbr, home_team_score, away_team_score, game_quality_rating, game_importance_rating FROM nhl_data WHERE ";
     if (queryOverride) {
       query = `SELECT ${selectionModifier} ${column} ${modifier} ORDER BY ${column} + 1 DESC;` // need to cast number so that 8 will not come before 79
-      console.log(query);
     } else {
       query = `SELECT ${selectionModifier} home_team_abbr = '${column}' OR away_team_abbr = '${column}'ORDER BY date DESC;`;
     }
@@ -164,6 +169,8 @@ function renderTemplate(route, data, userInput) {
           imageSource
         );
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
+        //constructNextPrevious();
+        //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
         resolve(renderedTemplate);
       } else if (route == "quality") {
         let gameQuality = titleAbbr;
@@ -195,9 +202,9 @@ function renderTemplate(route, data, userInput) {
           imageSource
         );
         renderedTemplate = renderedTemplate.replace("##TABLE_DATA##", table); // table replacement
-
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
-
+        //constructNextPrevious();
+        //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
         resolve(renderedTemplate);
       } else if (route == "importance") {
         let teamName = titleAbbr;
@@ -231,6 +238,8 @@ function renderTemplate(route, data, userInput) {
           imageSource
         );
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
+        //constructNextPrevious();
+        //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
         resolve(renderedTemplate);
       }
 
@@ -238,6 +247,22 @@ function renderTemplate(route, data, userInput) {
     });
   });
 }
+
+// function constructNextPrevious() {
+//   console.log(historyArray);
+//   buttons = "";
+//   currentIndex = currentIndex + 1;
+//   if(currentIndex > 0) {    
+//     buttons += `<div class="col-12 col-md-6 text-md-right" style="color: white;">
+//                 <a href="redirectButton?${historyArray[currentIndex-1]}&previous"><h4 class="text-center">Previous Page</h4></a>
+//                 </div>`
+//   } 
+//   else if (currentIndex + 8 < historyArray.length) {
+//     buttons += `<div class="col-12 col-md-6 text-md-right" style="color: white;">
+//                 <a href="${historyArray[currentIndex+1]}"><h4 class="text-center">Next Page</h4></a>
+//                 </div>`
+//   }
+// }
 
 function mapName(inputAbbr, data) {
   if (inputAbbr == data[0].home_team_abbr) {
@@ -248,10 +273,18 @@ function mapName(inputAbbr, data) {
 }
 
 app.get("/", async (req, res) => {
+  historyArray.push('/');
+  currentIndex++;
   homeTemplate.then((homeTemplate) => {
     res.status(200).type("html").send(homeTemplate);
   });
 });
+
+// app.get("/redirectButton", async (req, res) => {
+//   let buttonPressed = req.query[1];
+//   console.log(buttonPressed);
+// });
+
 
 app.get("/redirect", async (req, res) => {
   let team = req.query.redirectTeam;
@@ -269,6 +302,8 @@ app.get("/redirect", async (req, res) => {
 
 app.get("/team/:team", (req, res) => {
   let teamAbbr = req.params.team.toUpperCase();
+  historyArray.push('/team/' + teamAbbr);
+  currentIndex++;
   errorMessage =
     "ERROR 404 NOT FOUND: Can not find game data for requested team abbreviation " +
     teamAbbr;
@@ -287,6 +322,8 @@ app.get("/quality/:quality", async (req, res) => {
   let column = "game_quality_rating";
   let quality = req.params.quality.toLowerCase();
   errorMessage ="ERROR 404 NOT FOUND: Can not find game data for " + quality + " quality";
+  historyArray.push('/quality/' + quality);
+  currentIndex++;
   let queryModifier = abbreviationMapper(quality, column);
   queryDatabase(column, queryModifier, true).then((rows) => {
     renderTemplate("quality", rows, quality).then(() => {
@@ -300,6 +337,8 @@ app.get("/quality/:quality", async (req, res) => {
 app.get("/importance/:importance", async (req, res) => {
   let column = "game_importance_rating";
   let importance = req.params.importance.toLowerCase();
+  historyArray.push('/importance/' + importance);
+  currentIndex++;
   errorMessage =
     "ERROR 404 NOT FOUND: Can not find game data for " +
     importance +
