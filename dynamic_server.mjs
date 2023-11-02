@@ -175,6 +175,9 @@ function renderTemplate(route, data, userInput) {
           imageSource
         );
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
+        renderedTemplate = renderedTemplate.replace("##PREV##", urlStack[currentIndex+1]);
+        renderedTemplate = renderedTemplate.replace("##NEXT##", urlStack[currentIndex-1]);
+
         //constructNextPrevious();
         //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
 
@@ -226,6 +229,9 @@ function renderTemplate(route, data, userInput) {
         );
         renderedTemplate = renderedTemplate.replace("##TABLE_DATA##", table); // table replacement
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
+        renderedTemplate = renderedTemplate.replace("##PREV##", urlStack[currentIndex+1]);
+        renderedTemplate = renderedTemplate.replace("##NEXT##", urlStack[currentIndex-1]);
+
         //constructNextPrevious();
         //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
         const dynamicTitle = `<div class="row">
@@ -277,6 +283,10 @@ function renderTemplate(route, data, userInput) {
           imageSource
         );
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
+        renderedTemplate = renderedTemplate.replace("##PREV##", urlStack[currentIndex+1]);
+        renderedTemplate = renderedTemplate.replace("##NEXT##", urlStack[currentIndex-1]);
+
+
         //constructNextPrevious();
         //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
         const dynamicTitle = `<div class="row">
@@ -379,7 +389,7 @@ app.get("/redirect", async (req, res) => {
 
 app.get("/team/:team", (req, res) => {
   let teamAbbr = req.params.team.toUpperCase();
-  urlStack.push("team"/teamAbbr); // Add the current URL to the stack
+  urlStack.push(teamAbbr); // Add the current URL to the stack
   currentIndex = urlStack.length - 1;
   historyArray.push('/team/' + teamAbbr);
   currentIndex++;
@@ -400,7 +410,7 @@ app.get("/team/:team", (req, res) => {
 app.get("/quality/:quality", async (req, res) => {
   let column = "game_quality_rating";
   let quality = req.params.quality.toLowerCase();
-  urlStack.push(quality/quality); // Add the current URL to the stack
+  urlStack.push(quality); // Add the current URL to the stack
   currentIndex = urlStack.length - 1;
   errorMessage ="ERROR 404 NOT FOUND: Can not find game data for " + quality + " quality";
   historyArray.push('/quality/' + quality);
@@ -418,7 +428,7 @@ app.get("/quality/:quality", async (req, res) => {
 app.get("/importance/:importance", async (req, res) => {
   let column = "game_importance_rating";
   let importance = req.params.importance.toLowerCase();
-  urlStack.push(importance/importance); // Add the current URL to the stack
+  urlStack.push(importance); // Add the current URL to the stack
   currentIndex = urlStack.length - 1;
   historyArray.push('/importance/' + importance);
   currentIndex++;
