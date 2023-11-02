@@ -15,6 +15,7 @@ let errorMessage = "";
 let historyArray = [];
 let currentIndex = 0;
 let buttons = "";
+let urlStack = [];
 
 
 
@@ -104,6 +105,11 @@ function abbreviationMapper(abbr, column) {
       titleAbbr = "Very High";
       break;
 
+      case "all":
+      queryModifier = ">=0";
+      titleAbbr = "All";
+      break;
+
     default:
       queryModifier = null; //return all
   }
@@ -171,6 +177,23 @@ function renderTemplate(route, data, userInput) {
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
         //constructNextPrevious();
         //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
+
+        const dynamicTitle = `<div class="row">
+        <div class="col-12 col-md-3" style="color: white;">
+            <a href="/"><h4 class="text-center">Home</h4></a>
+        </div>
+        <div class="col-12 col-md-3" style="color: white;">
+            <a href="/team/min"><h4 class="text-center"><b>Teams</b></h4></a>
+        </div>
+        <div class="col-12 col-md-3" style="color: white;">
+            <a href="/quality/all"><h4 class="text-center">Quality</h4></a>
+        </div>
+        <div class="col-12 col-md-3" style="color: white;">
+            <a href="/importance/all"><h4 class="text-center">Importance</h4></a>
+        </div>
+    </div>`;
+    renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
+
         resolve(renderedTemplate);
       } else if (route == "quality") {
         let gameQuality = titleAbbr;
@@ -205,6 +228,22 @@ function renderTemplate(route, data, userInput) {
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
         //constructNextPrevious();
         //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
+        const dynamicTitle = `<div class="row">
+        <div class="col-12 col-md-3" style="color: white;">
+            <a href="/"><h4 class="text-center">Home</h4></a>
+        </div>
+        <div class="col-12 col-md-3" style="color: white;">
+            <a href="/team/min"><h4 class="text-center">Teams</h4></a>
+        </div>
+        <div class="col-12 col-md-3" style="color: white;">
+            <a href="/quality/all"><h4 class="text-center"><b>Quality</b></h4></a>
+        </div>
+        <div class="col-12 col-md-3" style="color: white;">
+            <a href="/importance/all"><h4 class="text-center">Importance</h4></a>
+        </div>
+    </div>`;
+    renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
+
         resolve(renderedTemplate);
       } else if (route == "importance") {
         let teamName = titleAbbr;
@@ -240,6 +279,22 @@ function renderTemplate(route, data, userInput) {
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
         //constructNextPrevious();
         //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
+        const dynamicTitle = `<div class="row">
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/"><h4 class="text-center">Home</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/team/min"><h4 class="text-center">Teams</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/quality/min"><h4 class="text-center">Quality</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/importance/min"><h4 class="text-center"><b>Importance</b></h4></a>
+                    </div>
+                </div>`;
+                renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
+
         resolve(renderedTemplate);
       }
 
@@ -272,9 +327,31 @@ function mapName(inputAbbr, data) {
   }
 }
 
+// Add these routes at the end of your server script
+app.get('/previous', (req, res) => {
+  if (currentIndex > 0) {
+    currentIndex--;
+    res.redirect(urlStack[currentIndex]);
+  } else {
+    res.status(404).send("No previous page available.");
+  }
+});
+
+app.get('/next', (req, res) => {
+  if (currentIndex < urlStack.length - 1) {
+    currentIndex++;
+    res.redirect(urlStack[currentIndex]);
+  } else {
+    res.status(404).send("No next page available.");
+  }
+});
+
+
+
+
 app.get("/", async (req, res) => {
   historyArray.push('/');
-  currentIndex++;
+  currentIndex = -1;
   homeTemplate.then((homeTemplate) => {
     res.status(200).type("html").send(homeTemplate);
   });
@@ -302,6 +379,8 @@ app.get("/redirect", async (req, res) => {
 
 app.get("/team/:team", (req, res) => {
   let teamAbbr = req.params.team.toUpperCase();
+  urlStack.push("team"/teamAbbr); // Add the current URL to the stack
+  currentIndex = urlStack.length - 1;
   historyArray.push('/team/' + teamAbbr);
   currentIndex++;
   errorMessage =
@@ -321,6 +400,8 @@ app.get("/team/:team", (req, res) => {
 app.get("/quality/:quality", async (req, res) => {
   let column = "game_quality_rating";
   let quality = req.params.quality.toLowerCase();
+  urlStack.push(quality/quality); // Add the current URL to the stack
+  currentIndex = urlStack.length - 1;
   errorMessage ="ERROR 404 NOT FOUND: Can not find game data for " + quality + " quality";
   historyArray.push('/quality/' + quality);
   currentIndex++;
@@ -337,6 +418,8 @@ app.get("/quality/:quality", async (req, res) => {
 app.get("/importance/:importance", async (req, res) => {
   let column = "game_importance_rating";
   let importance = req.params.importance.toLowerCase();
+  urlStack.push(importance/importance); // Add the current URL to the stack
+  currentIndex = urlStack.length - 1;
   historyArray.push('/importance/' + importance);
   currentIndex++;
   errorMessage =
