@@ -146,6 +146,23 @@ function renderTemplate(route, data, userInput) {
                 imageAlt = "A picture of a vintage hockey arena";
                 renderedTemplate = renderedTemplate.replace('##IMAGE_SRC##', imageSource);
                 renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt);
+
+                const dynamicTitle = `<div class="row">
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/"><h4 class="text-center">Home</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/team/min"><h4 class="text-center"><b>Teams</b></h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/quality/min"><h4 class="text-center">Quality</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/importance/min"><h4 class="text-center">Importance</h4></a>
+                    </div>
+                </div>`;
+                renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
+
                 resolve(renderedTemplate);
 
             } else if (route == "quality") {
@@ -160,10 +177,27 @@ function renderTemplate(route, data, userInput) {
                 })
                 table+= '</tbody>'               
                 renderedTemplate = template.replace('##TITLE##', title);
+                renderedTemplate = renderedTemplate.replace('##TABLE_DATA##', table); // table replacement
                 imageSource = "https://stevethedoc.files.wordpress.com/2020/02/1942483.jpg";
                 imageAlt = "A picture of a quality stamp";
                 renderedTemplate = renderedTemplate.replace('##IMAGE_SRC##', imageSource);
-                renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt);               
+                renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt); 
+                
+                const dynamicTitle = `<div class="row">
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/"><h4 class="text-center">Home</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/team/min"><h4 class="text-center">Teams</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/quality/min"><h4 class="text-center"><b>Quality</b></h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/importance/min"><h4 class="text-center">Importance</h4></a>
+                    </div>
+                </div>`;
+                renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
               
                 resolve(renderedTemplate);
 
@@ -185,6 +219,23 @@ function renderTemplate(route, data, userInput) {
                 renderedTemplate = renderedTemplate.replace('##TABLE_DATA##', table); // table replacement
                 renderedTemplate = renderedTemplate.replace('##IMAGE_SRC##', imageSource);
                 renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt);
+
+                const dynamicTitle = `<div class="row">
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/"><h4 class="text-center">Home</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/team/min"><h4 class="text-center">Teams</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/quality/min"><h4 class="text-center">Quality</h4></a>
+                    </div>
+                    <div class="col-12 col-md-3" style="color: white;">
+                        <a href="/importance/min"><h4 class="text-center"><b>Importance</b></h4></a>
+                    </div>
+                </div>`;
+                renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
+
                 resolve(renderedTemplate);
             }
             
@@ -204,10 +255,9 @@ function mapName(inputAbbr, data) {
 
 
 app.get('/', async (req, res) => {   
-
     homeTemplate.then((homeTemplate) => {
         res.status(200).type('html').send(homeTemplate);         
-    });  
+    }); 
 });
 
 app.get('/redirect', async (req, res) => {
@@ -260,6 +310,15 @@ app.get('/importance/:importance', async (req, res) => {
         });
     }); 
 });
+
+
+
+const menuItems = [
+    { text: "Home", href: "/", id: "home" },
+    { text: "Teams", href: "/team/min", id: "teams" },
+    { text: "Quality", href: "/quality/min", id: "quality" },
+    { text: "Importance", href: "/importance/min", id: "importance" }
+];
 
 app.listen(port, () => {
     console.log('http://localhost:8080');
