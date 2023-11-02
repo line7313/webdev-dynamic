@@ -132,124 +132,6 @@ function createTableHead(columns) {
 }
 
 function renderTemplate(route, data, userInput) {
-<<<<<<< HEAD
-
-    return new Promise((resolve, reject) => {
-        let imageSource = '';
-        let imageAlt = '';
-        template.then((template) => {
-            if (route == "team") { //This is the route we specify when calling the renderTemplate function
-                let teamName = mapName(userInput, data);
-                title = `Game Data for ${teamName}`; //The title above the data
-                let table = ''; //Table structure is as follows, HEAD, ROW, ROW, ROW, etc
-                table += createTableHead(["Date", "Home Team", "Away Team", "Home Team Score", "Away Team Score"]); // Create the labels for the columns we want for this route (will change depending on route)
-                               
-                table += '<tbody>'; // NEED TO PUT EACH ROW WITHIN THE BODY
-                data.forEach((game) => {
-                    table += createTableRow([game.date, game.home_team, game.away_team, game.home_team_score, game.away_team_score]); // Populate a row for every game
-                })
-                table += '</tbody>'                
-                renderedTemplate = template.replace('##TITLE##', title); // title replacement
-                renderedTemplate = renderedTemplate.replace('##TABLE_DATA##', table); // table replacement
-                imageSource = "https://cdn1.sportngin.com/attachments/photo/2721/4644/Mpls_Arena_large.jpg";
-                imageAlt = "A picture of a vintage hockey arena";
-                renderedTemplate = renderedTemplate.replace('##IMAGE_SRC##', imageSource);
-                renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt);
-
-                const dynamicTitle = `<div class="row">
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/"><h4 class="text-center">Home</h4></a>
-                    </div>
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/team/min"><h4 class="text-center"><b>Teams</b></h4></a>
-                    </div>
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/quality/min"><h4 class="text-center">Quality</h4></a>
-                    </div>
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/importance/min"><h4 class="text-center">Importance</h4></a>
-                    </div>
-                </div>`;
-                renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
-
-                resolve(renderedTemplate);
-
-            } else if (route == "quality") {
-                let gameQuality = titleAbbr;
-                title = `Showing Data For ${gameQuality} Quality Games `;
-                let table = '';
-                table += createTableHead(["Date", "Home Team", "Away Team", "Game Quality Rating"]);
-                
-                table += '<tbody>';
-                data.forEach((game) => {
-                    table += createTableRow([game.date, game.home_team, game.away_team, game.game_quality_rating]);
-                })
-                table+= '</tbody>'               
-                renderedTemplate = template.replace('##TITLE##', title);
-                renderedTemplate = renderedTemplate.replace('##TABLE_DATA##', table); // table replacement
-                imageSource = "https://stevethedoc.files.wordpress.com/2020/02/1942483.jpg";
-                imageAlt = "A picture of a quality stamp";
-                renderedTemplate = renderedTemplate.replace('##IMAGE_SRC##', imageSource);
-                renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt); 
-                
-                const dynamicTitle = `<div class="row">
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/"><h4 class="text-center">Home</h4></a>
-                    </div>
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/team/min"><h4 class="text-center">Teams</h4></a>
-                    </div>
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/quality/min"><h4 class="text-center"><b>Quality</b></h4></a>
-                    </div>
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/importance/min"><h4 class="text-center">Importance</h4></a>
-                    </div>
-                </div>`;
-                renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
-              
-                resolve(renderedTemplate);
-
-            } else if (route == "importance") {
-                let teamName = titleAbbr;
-                title = `Showing Data For ${teamName} Importance Games `;
-                let table = ''; //Table structure is as follows, HEAD, ROW, ROW, ROW, etc
-                table += createTableHead(["Date", "Home Team", "Away Team", "Importance"]); // Create the labels for the columns we want for this route (will change depending on route)
-                               
-                table += '<tbody>'; // NEED TO PUT EACH ROW WITHIN THE BODY
-                data.forEach((game) => {
-                    table += createTableRow([game.date, game.home_team, game.away_team, game.game_importance_rating]); // Populate a row for every game
-                })
-
-                table += '</tbody>'
-                imageSource = "https://www.picserver.org/assets/library/2020-10-13/originals/importance.jpg";
-                imageAlt = "A picture of a sign that says importance";
-                renderedTemplate = template.replace('##TITLE##', title); // title replacement
-                renderedTemplate = renderedTemplate.replace('##TABLE_DATA##', table); // table replacement
-                renderedTemplate = renderedTemplate.replace('##IMAGE_SRC##', imageSource);
-                renderedTemplate = renderedTemplate.replace('##IMAGE_ALT##', imageAlt);
-
-                const dynamicTitle = `<div class="row">
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/"><h4 class="text-center">Home</h4></a>
-                    </div>
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/team/min"><h4 class="text-center">Teams</h4></a>
-                    </div>
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/quality/min"><h4 class="text-center">Quality</h4></a>
-                    </div>
-                    <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/importance/min"><h4 class="text-center"><b>Importance</b></h4></a>
-                    </div>
-                </div>`;
-                renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
-
-                resolve(renderedTemplate);
-            }
-            
-            reject();
-=======
   return new Promise((resolve, reject) => {
     let imageSource = "";
     let imageAlt = "";
@@ -275,7 +157,6 @@ function renderTemplate(route, data, userInput) {
             game.home_team_score,
             game.away_team_score,
           ]); // Populate a row for every game
->>>>>>> 97c1b0c5233cac7e2463df0e9cd27f67723eede2
         });
         table += "</tbody>";
         renderedTemplate = template.replace("##TITLE##", title); // title replacement
@@ -391,20 +272,12 @@ function mapName(inputAbbr, data) {
   }
 }
 
-<<<<<<< HEAD
-
-app.get('/', async (req, res) => {   
-    homeTemplate.then((homeTemplate) => {
-        res.status(200).type('html').send(homeTemplate);         
-    }); 
-=======
 app.get("/", async (req, res) => {
   historyArray.push('/');
   currentIndex++;
   homeTemplate.then((homeTemplate) => {
     res.status(200).type("html").send(homeTemplate);
   });
->>>>>>> 97c1b0c5233cac7e2463df0e9cd27f67723eede2
 });
 
 // app.get("/redirectButton", async (req, res) => {
@@ -479,15 +352,6 @@ app.get("/importance/:importance", async (req, res) => {
     res.status(404).send(errorMessage);
   });
 });
-
-
-
-const menuItems = [
-    { text: "Home", href: "/", id: "home" },
-    { text: "Teams", href: "/team/min", id: "teams" },
-    { text: "Quality", href: "/quality/min", id: "quality" },
-    { text: "Importance", href: "/importance/min", id: "importance" }
-];
 
 app.listen(port, () => {
   console.log("http://localhost:8080");
