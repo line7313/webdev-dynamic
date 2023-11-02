@@ -313,22 +313,6 @@ function renderTemplate(route, data, userInput) {
   });
 }
 
-// function constructNextPrevious() {
-//   console.log(historyArray);
-//   buttons = "";
-//   currentIndex = currentIndex + 1;
-//   if(currentIndex > 0) {    
-//     buttons += `<div class="col-12 col-md-6 text-md-right" style="color: white;">
-//                 <a href="redirectButton?${historyArray[currentIndex-1]}&previous"><h4 class="text-center">Previous Page</h4></a>
-//                 </div>`
-//   } 
-//   else if (currentIndex + 8 < historyArray.length) {
-//     buttons += `<div class="col-12 col-md-6 text-md-right" style="color: white;">
-//                 <a href="${historyArray[currentIndex+1]}"><h4 class="text-center">Next Page</h4></a>
-//                 </div>`
-//   }
-// }
-
 function mapName(inputAbbr, data) {
   if (inputAbbr == data[0].home_team_abbr) {
     return data[0].home_team;
@@ -337,7 +321,6 @@ function mapName(inputAbbr, data) {
   }
 }
 
-// Add these routes at the end of your server script
 app.get('/previous', (req, res) => {
   if (currentIndex > 0) {
     currentIndex--;
@@ -367,12 +350,6 @@ app.get("/", async (req, res) => {
   });
 });
 
-// app.get("/redirectButton", async (req, res) => {
-//   let buttonPressed = req.query[1];
-//   console.log(buttonPressed);
-// });
-
-
 app.get("/redirect", async (req, res) => {
   let team = req.query.redirectTeam;
   let quality = req.query.redirectQuality;
@@ -389,9 +366,9 @@ app.get("/redirect", async (req, res) => {
 
 app.get("/team/:team", (req, res) => {
   let teamAbbr = req.params.team.toUpperCase();
-  urlStack.push(teamAbbr); // Add the current URL to the stack
+  urlStack.push('/team/' + teamAbbr);
+  console.log(urlStack);
   currentIndex = urlStack.length - 1;
-  historyArray.push('/team/' + teamAbbr);
   currentIndex++;
   errorMessage =
     "ERROR 404 NOT FOUND: Can not find game data for requested team abbreviation " +
@@ -410,10 +387,9 @@ app.get("/team/:team", (req, res) => {
 app.get("/quality/:quality", async (req, res) => {
   let column = "game_quality_rating";
   let quality = req.params.quality.toLowerCase();
-  urlStack.push(quality); // Add the current URL to the stack
+  urlStack.push('/quality/' + quality); 
   currentIndex = urlStack.length - 1;
   errorMessage ="ERROR 404 NOT FOUND: Can not find game data for " + quality + " quality";
-  historyArray.push('/quality/' + quality);
   currentIndex++;
   let queryModifier = abbreviationMapper(quality, column);
   queryDatabase(column, queryModifier, true).then((rows) => {
@@ -428,9 +404,8 @@ app.get("/quality/:quality", async (req, res) => {
 app.get("/importance/:importance", async (req, res) => {
   let column = "game_importance_rating";
   let importance = req.params.importance.toLowerCase();
-  urlStack.push(importance); // Add the current URL to the stack
+  urlStack.push('/importance/' + importance);
   currentIndex = urlStack.length - 1;
-  historyArray.push('/importance/' + importance);
   currentIndex++;
   errorMessage =
     "ERROR 404 NOT FOUND: Can not find game data for " +
