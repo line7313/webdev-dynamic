@@ -16,6 +16,7 @@ let historyArray = [];
 let currentIndex = 0;
 let buttons = "";
 let urlStack = [];
+let chartScript = '';
 
 
 
@@ -143,6 +144,12 @@ function renderTemplate(route, data, userInput) {
     let imageAlt = "";
     template.then((template) => {
       if (route == "team") {
+
+        data[0]
+
+        chartScript = `data: { labels: ["${data[0].home_team}", "${data[0].away_team}"], datasets: [{label: '# Points Scored In Most Recent Game', data: ["${data[0].home_team_score}", "${data[0].away_team_score}"], borderWidth: 1}] },`;
+
+
         //This is the route we specify when calling the renderTemplate function
         let teamName = mapName(userInput, data);
         title = `Game Data for ${teamName}`; //The title above the data
@@ -175,8 +182,11 @@ function renderTemplate(route, data, userInput) {
           imageSource
         );
         renderedTemplate = renderedTemplate.replace("##IMAGE_ALT##", imageAlt);
+        renderedTemplate = renderedTemplate.replace("##CHART_DATA##", chartScript);
         renderedTemplate = renderedTemplate.replace("##PREV##", urlStack[currentIndex+1]);
         renderedTemplate = renderedTemplate.replace("##NEXT##", urlStack[currentIndex-1]);
+
+        console.log(renderedTemplate);
 
         //constructNextPrevious();
         //renderedTemplate = renderedTemplate.replace("##NEXT_PREVIOUS##", buttons);
@@ -297,10 +307,10 @@ function renderTemplate(route, data, userInput) {
                         <a href="/team/min"><h4 class="text-center">Teams</h4></a>
                     </div>
                     <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/quality/min"><h4 class="text-center">Quality</h4></a>
+                        <a href="/quality/low"><h4 class="text-center">Quality</h4></a>
                     </div>
                     <div class="col-12 col-md-3" style="color: white;">
-                        <a href="/importance/min"><h4 class="text-center"><b>Importance</b></h4></a>
+                        <a href="/importance/low"><h4 class="text-center"><b>Importance</b></h4></a>
                     </div>
                 </div>`;
                 renderedTemplate = renderedTemplate.replace('##BUTTON##', dynamicTitle);
@@ -321,10 +331,11 @@ function mapName(inputAbbr, data) {
   }
 }
 
+// Add these routes at the end of your server script
 app.get('/previous', (req, res) => {
   if (currentIndex > 0) {
-    currentIndex--;
-    res.redirect(urlStack[currentIndex]);
+    currentIndex = currentIndex - 2;
+    res.redirect(urlStack[currentIndex+1]);
   } else {
     res.status(404).send("No previous page available.");
   }
@@ -339,18 +350,15 @@ app.get('/next', (req, res) => {
   }
 });
 
-
-
-
 app.get("/", async (req, res) => {
-  historyArray.push('/');
-  currentIndex = -1;
+  urlStack.push('/');
   homeTemplate.then((homeTemplate) => {
     res.status(200).type("html").send(homeTemplate);
   });
 });
 
 app.get("/redirect", async (req, res) => {
+  console.log("current index" + currentIndex);
   let team = req.query.redirectTeam;
   let quality = req.query.redirectQuality;
   let importance = req.query.redirectImportance;
@@ -368,7 +376,6 @@ app.get("/team/:team", (req, res) => {
   let teamAbbr = req.params.team.toUpperCase();
   urlStack.push('/team/' + teamAbbr);
   console.log(urlStack);
-  currentIndex = urlStack.length - 1;
   currentIndex++;
   errorMessage =
     "ERROR 404 NOT FOUND: Can not find game data for requested team abbreviation " +
@@ -388,7 +395,6 @@ app.get("/quality/:quality", async (req, res) => {
   let column = "game_quality_rating";
   let quality = req.params.quality.toLowerCase();
   urlStack.push('/quality/' + quality); 
-  currentIndex = urlStack.length - 1;
   errorMessage ="ERROR 404 NOT FOUND: Can not find game data for " + quality + " quality";
   currentIndex++;
   let queryModifier = abbreviationMapper(quality, column);
@@ -405,7 +411,6 @@ app.get("/importance/:importance", async (req, res) => {
   let column = "game_importance_rating";
   let importance = req.params.importance.toLowerCase();
   urlStack.push('/importance/' + importance);
-  currentIndex = urlStack.length - 1;
   currentIndex++;
   errorMessage =
     "ERROR 404 NOT FOUND: Can not find game data for " +
